@@ -1,0 +1,163 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+interface PostLink {
+  id: string;
+  title: string;
+}
+
+interface Props {
+  slug: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags: string[];
+  readingTime: string;
+  newer?: PostLink;
+  older?: PostLink;
+}
+
+const { slug, title, description, pubDate, updatedDate, tags, readingTime, newer, older } =
+  Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={`/og/${slug}.png`}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+>
+  <main>
+    <article>
+      <header class="post-header">
+        <p class="eyebrow">Ground Truth</p>
+        <h1 transition:name={`post-${slug}`}>{title}</h1>
+        <div class="post-meta">
+          <FormattedDate date={pubDate} />
+          <span aria-hidden="true">·</span>
+          <span>{readingTime}</span>
+          {
+            updatedDate && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>Updated <FormattedDate date={updatedDate} /></span>
+              </>
+            )
+          }
+        </div>
+      </header>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      {
+        tags.length > 0 && (
+          <ul class="tags" aria-label="Tags">
+            {tags.map((tag) => <li>{tag}</li>)}
+          </ul>
+        )
+      }
+
+      {
+        (newer || older) && (
+          <nav class="post-nav" aria-label="More posts">
+            {older ? (
+              <a href={`/writing/${older.id}`} class="older">
+                <span class="eyebrow">← Older</span>
+                <span class="nav-title">{older.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {newer ? (
+              <a href={`/writing/${newer.id}`} class="newer">
+                <span class="eyebrow">Newer →</span>
+                <span class="nav-title">{newer.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )
+      }
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    max-width: var(--prose-width);
+    margin: 0 auto;
+    padding: 64px var(--gutter) 80px;
+  }
+  .post-header {
+    margin-bottom: 44px;
+  }
+  .post-header h1 {
+    margin-top: 14px;
+    font-size: clamp(1.9rem, 1.5rem + 1.7vw, 2.4rem);
+    line-height: 1.18;
+  }
+  .post-meta {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--fg-faint);
+  }
+  .post-meta :global(time) {
+    color: inherit;
+  }
+  .tags {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 9px;
+  }
+  .post-nav {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .post-nav a {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .post-nav a:hover {
+    text-decoration: none;
+  }
+  .post-nav .newer {
+    text-align: right;
+    align-items: flex-end;
+  }
+  .nav-title {
+    font-size: 0.98rem;
+    color: var(--fg-muted);
+    transition: color 0.15s ease;
+  }
+  .post-nav a:hover .nav-title {
+    color: var(--fg-strong);
+  }
+</style>

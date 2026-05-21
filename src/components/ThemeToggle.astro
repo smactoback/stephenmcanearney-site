@@ -1,0 +1,95 @@
+---
+// Light / System / Dark control. Preference persists to localStorage.
+---
+
+<div class="theme-toggle" role="radiogroup" aria-label="Color theme">
+  <button type="button" role="radio" aria-checked="false" data-theme-value="light">
+    <span class="sr-only">Light theme</span>
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4"></circle>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+    </svg>
+  </button>
+  <button type="button" role="radio" aria-checked="false" data-theme-value="system">
+    <span class="sr-only">System theme</span>
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+      <path d="M8 21h8M12 17v4"></path>
+    </svg>
+  </button>
+  <button type="button" role="radio" aria-checked="false" data-theme-value="dark">
+    <span class="sr-only">Dark theme</span>
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+    </svg>
+  </button>
+</div>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+  }
+  button {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: var(--fg-faint);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  button:hover {
+    color: var(--fg);
+  }
+  button[aria-checked='true'] {
+    background: var(--bg-subtle);
+    color: var(--fg-strong);
+  }
+</style>
+
+<script>
+  function setupThemeToggle() {
+    const group = document.querySelector<HTMLElement>('.theme-toggle');
+    if (!group || group.dataset.bound) return;
+    group.dataset.bound = '1';
+
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const buttons = Array.from(group.querySelectorAll<HTMLButtonElement>('button'));
+
+    const pref = () => localStorage.getItem('theme') ?? 'dark';
+    const resolve = (p: string) =>
+      p === 'light' ? 'light' : p === 'system' ? (mq.matches ? 'dark' : 'light') : 'dark';
+
+    function render() {
+      const p = pref();
+      document.documentElement.dataset.theme = resolve(p);
+      for (const b of buttons) {
+        b.setAttribute('aria-checked', String(b.dataset.themeValue === p));
+      }
+    }
+
+    group.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-theme-value]');
+      if (!btn?.dataset.themeValue) return;
+      localStorage.setItem('theme', btn.dataset.themeValue);
+      render();
+    });
+
+    mq.addEventListener('change', () => {
+      if (pref() === 'system') render();
+    });
+
+    render();
+  }
+
+  setupThemeToggle();
+  document.addEventListener('astro:page-load', setupThemeToggle);
+</script>

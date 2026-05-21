@@ -1,0 +1,59 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  post: CollectionEntry<'writing'>;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate } = post.data;
+---
+
+<a href={`/writing/${post.id}`} class="post">
+  <div class="row">
+    <h3 transition:name={`post-${post.id}`}>{title}</h3>
+    <FormattedDate date={pubDate} />
+  </div>
+  <p>{description}</p>
+</a>
+
+<style>
+  .post {
+    display: block;
+    padding: 19px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .post:hover {
+    text-decoration: none;
+  }
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--fg-strong);
+  }
+  .post:hover h3 {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+  .row :global(time) {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.02em;
+    color: var(--fg-faint);
+  }
+  p {
+    margin-top: 5px;
+    max-width: 52ch;
+    color: var(--fg-muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+</style>

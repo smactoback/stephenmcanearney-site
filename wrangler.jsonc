@@ -1,0 +1,7 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "stephenmcanearney-site",
+	"compatibility_date": "2026-05-21",
+	// Static site: Cloudflare Pages serves the build output directly.
+	"pages_build_output_dir": "./dist"
+}

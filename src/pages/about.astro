@@ -1,63 +1,163 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Selected work. The Nature link is a placeholder — drop in the real DOI.
+const work = [
+  {
+    title: 'Meta Neural Band',
+    detail: 'Wristband that reads motor intent from surface EMG. Shipped as a Meta product.',
+    href: undefined as string | undefined,
+  },
+  {
+    title: 'Meta Ray-Ban Display',
+    detail: 'Display smart glasses. Shipped as a Meta consumer product.',
+    href: undefined as string | undefined,
+  },
+  {
+    title: 'Research in Nature',
+    detail: 'Co-authored work on neuromotor interfaces.',
+    href: 'https://www.nature.com', // TODO: replace with the paper DOI
+  },
+  {
+    title: 'Hone Capital',
+    detail: 'Early-stage venture investing.',
+    href: undefined as string | undefined,
+  },
+  {
+    title: 'J.P. Morgan',
+    detail: 'Technology, media & telecom investment banking.',
+    href: undefined as string | undefined,
+  },
+  {
+    title: 'Harvard Surgical Planning Lab',
+    detail: 'Medical imaging and surgical planning research.',
+    href: undefined as string | undefined,
+  },
+];
+
+const education = [
+  {
+    school: 'Columbia University',
+    detail: 'M.S., Management Science & Engineering. Fulbright Scholar.',
+  },
+  {
+    school: 'The University of Western Australia',
+    detail: 'Electrical & Electronic Engineering; Anatomy & Human Biology.',
+  },
+];
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
+<BaseLayout
+  title="About"
+  description="Stephen McAnearney — from engineering and anatomy in Perth to neural interfaces at Meta, and back."
 >
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+  <main>
+    <header class="page-head">
+      <p class="eyebrow">About</p>
+      <h1>Stephen McAnearney</h1>
+    </header>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+    <div class="prose narrative">
+      <p>
+        I grew up in Perth, Western Australia, and studied electrical and electronic engineering
+        alongside anatomy and human biology at the University of Western Australia — an unusual
+        pairing that set the pattern for most of my work since: technology pointed at the human
+        body.
+      </p>
+      <p>
+        A Fulbright Scholarship took me to Columbia, where I completed a master's in Management
+        Science and Engineering. Before that I spent time at the Harvard Surgical Planning Lab,
+        working on medical imaging and the software that helps surgeons rehearse an operation
+        before the first incision.
+      </p>
+      <p>
+        I started my career in finance — technology, media and telecom investment banking at
+        J.P. Morgan — then moved to the other side of the table as an investor at Hone Capital,
+        backing early-stage companies.
+      </p>
+      <p>
+        Most recently I was a Senior Product Manager at Meta, working on neural interfaces. I
+        helped ship the Meta Neural Band, a wristband that reads motor intent from the surface of
+        the skin, and the Meta Ray-Ban Display glasses. Some of that work was published in Nature.
+      </p>
+      <p>
+        I'm now relocating to Perth. Australia has world-class research and real industrial
+        advantages in the things deep tech increasingly depends on — energy, minerals, space, and
+        marine systems. I want to help build that ecosystem, as an investor or as a founder.
+      </p>
+    </div>
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+    <section class="block">
+      <h2 class="eyebrow">Selected work</h2>
+      <ul class="entry-list">
+        {
+          work.map((item) => (
+            <li>
+              <span class="entry-title">
+                {item.href ? <a href={item.href}>{item.title}</a> : item.title}
+              </span>
+              <span class="entry-detail">{item.detail}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
+    <section class="block">
+      <h2 class="eyebrow">Education</h2>
+      <ul class="entry-list">
+        {
+          education.map((item) => (
+            <li>
+              <span class="entry-title">{item.school}</span>
+              <span class="entry-detail">{item.detail}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</BaseLayout>
 
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+<style>
+  main {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 72px var(--gutter) 88px;
+  }
+  .page-head {
+    margin-bottom: 36px;
+  }
+  .page-head h1 {
+    margin-top: 12px;
+    font-size: clamp(1.9rem, 1.6rem + 1.5vw, 2.3rem);
+  }
+  .narrative {
+    color: var(--fg);
+  }
+  .block {
+    margin-top: 56px;
+  }
+  .entry-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+  .entry-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .entry-title {
+    font-size: 1.02rem;
+    font-weight: 500;
+    color: var(--fg-strong);
+  }
+  .entry-detail {
+    font-size: 0.94rem;
+    color: var(--fg-muted);
+  }
+</style>
