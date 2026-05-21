@@ -1,0 +1,12 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "stephenmcanearney-site",
+	"compatibility_date": "2026-05-21",
+	// Static site: `npm run build` emits ./dist, and `wrangler deploy` uploads
+	// it as Workers static assets. No `main` = assets-only Worker (no server
+	// code, no Astro adapter). The config file's presence also stops
+	// `wrangler deploy` from running its `astro add cloudflare` auto-setup.
+	"assets": {
+		"directory": "./dist"
+	}
+}
