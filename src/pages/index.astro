@@ -5,20 +5,82 @@ import { getCollection } from 'astro:content';
 import { dotDate } from '../lib/format';
 import { SITE } from '../consts';
 
-const posts = (await getCollection('previous')).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
-);
+const posts = await getCollection('previous');
 
-/** Lifted out of the chronology to the top of the list. */
-const FEATURED_SLUG = 'can-you-build-a-quant-vc-fund';
-const featured = posts.find((p) => p.id === FEATURED_SLUG);
-// Drop it from the years below rather than list it twice.
-const rest = featured ? posts.filter((p) => p.id !== featured.id) : posts;
+// Four working buckets for the archive. Order here is the display order; each
+// post id lands in exactly one bucket. Anything unmapped falls to "Other".
+const CATEGORIES = [
+  {
+    label: 'Venture & Fund Design',
+    ids: [
+      'thoughts-on-structuring-a-seed-fund',
+      'optimizations-and-likelihoods-of-fund-returns',
+      'relationship-between-number-of-portfolio-companies-and-fund-returns',
+      'modeling-returns-in-venture-capital-power-law-hybrid',
+      'running-the-math-on-larger-vc-portfolios',
+      'adaptive-markets-based-approach-the-investing-in-venture-capital',
+      'graph-theory-applications-in-early-stage-private-investment',
+      'thoughts-on-fund-sizing',
+      'can-you-build-a-quant-vc-fund',
+      'machine-learning-in-private-investment',
+      'what-value-should-an-angel-investor-provide',
+    ],
+  },
+  {
+    label: 'AI & Machine Learning',
+    ids: [
+      'investment-opportunities-in-ai',
+      'the-a3-thesis-automation-augmentation-and-autonomy',
+      'human-learning-vs-machine-learning',
+      'activity-in-deep-learning-specialized-hardware-cpugputpuasic',
+      'ai-future-entering-a-shared-world-of-significance',
+      'dogfooding-yutoris-scouts',
+      '7qy6q2b45gxkjdzc4ozeupf3n1tc2n',
+    ],
+  },
+  {
+    label: 'Building Companies',
+    ids: [
+      'decision-making-in-a-low-information-environment',
+      'the-startup-genome',
+      'notes-from-high-output-management',
+      'founder-preparationdiligence-and-dynamic-balance',
+      'a-framework-for-company-formation-diligence',
+      'exogenous-factors-and-company-success',
+      'industry-deep-dive-open-source-databases',
+    ],
+  },
+  {
+    label: 'Technology, History & Culture',
+    ids: [
+      'notes-the-british-industrial-revolution-in-global-perspective',
+      'china-technology-development-and-the-future',
+      'things-that-change-and-stay-the-same-or-the-technological-event-horizon',
+      'the-end-of-our-shared-experience-in-physical-space',
+      'the-power-of-networks-in-the-golden-age-of-silicon-valley',
+      'modernists-and-mavericks-new-york-tech',
+      'how-platform-shifts-happen-part-1-metaphors',
+      'one-forking-path-pynchon-borges-and-william-gibson',
+      'exploring-startup-activity-nyc-sf-030518-031218',
+    ],
+  },
+] as const;
 
-// The archive spans nearly a decade, so the year is the useful grouping.
-const years = [...new Set(rest.map((p) => p.data.pubDate.getUTCFullYear()))].sort(
-  (a, b) => b - a,
-);
+const byId = new Map(posts.map((p) => [p.id, p]));
+// Build each group in the declared category order, posts newest-first inside.
+const groups = CATEGORIES.map((c) => ({
+  label: c.label,
+  posts: c.ids
+    .map((id) => byId.get(id))
+    .filter((p) => p != null)
+    .sort((a, b) => b!.data.pubDate.getTime() - a!.data.pubDate.getTime()),
+}));
+// Surface any post that slipped through the mapping rather than dropping it.
+const mapped = new Set(CATEGORIES.flatMap((c) => c.ids));
+const orphans = posts
+  .filter((p) => !mapped.has(p.id))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+if (orphans.length) groups.push({ label: 'Other', posts: orphans });
 
 // Sampled from the Yallingup Coffee Roasting Company stripe block.
 const FIELD_PRIMARY = '#2ebda1';
@@ -57,35 +119,18 @@ const FIELD_SECONDARY = '#1265b3';
         <span>Writing</span>
       </div>
       {
-        featured && (
-          <div class="year feature">
-            <h2 class="year-label accent">Featured</h2>
+        groups.map((g) => (
+          <div class="group">
+            <h2 class="group-label">{g.label}</h2>
             <div class="rows">
-              <article class="row">
-                <div class="when">{dotDate(featured.data.pubDate)}</div>
-                <a href={`/previous-writing/${featured.id}`} class="title-link">
-                  <h3>{featured.data.title}</h3>
-                </a>
-              </article>
-            </div>
-          </div>
-        )
-      }
-      {
-        years.map((year) => (
-          <div class="year">
-            <h2 class="year-label">{year}</h2>
-            <div class="rows">
-              {rest
-                .filter((p) => p.data.pubDate.getUTCFullYear() === year)
-                .map((p) => (
-                  <article class="row">
-                    <div class="when">{dotDate(p.data.pubDate)}</div>
-                    <a href={`/previous-writing/${p.id}`} class="title-link">
-                      <h3>{p.data.title}</h3>
-                    </a>
-                  </article>
-                ))}
+              {g.posts.map((p) => (
+                <article class="row">
+                  <div class="when">{dotDate(p!.data.pubDate)}</div>
+                  <a href={`/previous-writing/${p!.id}`} class="title-link">
+                    <h3>{p!.data.title}</h3>
+                  </a>
+                </article>
+              ))}
             </div>
           </div>
         ))
@@ -171,24 +216,19 @@ const FIELD_SECONDARY = '#1265b3';
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-  .year { margin-top: 28px; }
-  .year:first-of-type { margin-top: 0; }
-  .year-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    opacity: 0.55;
-    padding-bottom: 8px;
-  }
-  /* Reads as a label in the same column as the years, but claimed by the accent
-     so it does not scan as just another date heading. */
-  .year-label.accent {
+  .group { margin-top: 34px; }
+  .group:first-of-type { margin-top: 0; }
+  /* The category is the organising line now, so it carries the accent and reads
+     a notch louder than the year labels it replaced. */
+  .group-label {
     color: var(--accent);
-    opacity: 1;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   }
-  .feature { margin-bottom: 34px; }
-  .feature .row { border-top-color: color-mix(in srgb, var(--accent) 35%, transparent); }
   .row {
     display: grid;
     grid-template-columns: 110px 1fr;
@@ -197,6 +237,7 @@ const FIELD_SECONDARY = '#1265b3';
     border-top: 1px dashed var(--rule);
     align-items: baseline;
   }
+  .rows .row:first-child { border-top: none; }
   .when {
     font-size: 12px;
     opacity: 0.7;
