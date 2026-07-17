@@ -96,6 +96,11 @@ const FIELD_SECONDARY = '#1265b3';
           Shipped the world's first mainstream neural interface at Meta
           (<a href="https://www.nature.com/articles/s41586-025-09255-w">Nature</a>).
         </p>
+        <p class="epigraph">
+          “I believe that the attempt to make a thinking machine will help us greatly in
+          finding out how we think ourselves.”<br />
+          <span class="cite">— Alan Turing, 1951</span>
+        </p>
       </div>
 
       <figure class="fig">
@@ -166,6 +171,18 @@ const FIELD_SECONDARY = '#1265b3';
   }
   .intro p + p {
     margin-top: 1em;
+  }
+  .intro p + .epigraph {
+    margin-top: 62px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+  .intro .epigraph .cite {
+    opacity: 0.7;
+    display: inline-block;
+    margin-top: 6px;
   }
   /* The global rule is `a { color: inherit; text-decoration: none }`, which would
      leave the citation undiscoverable until hover — and never, on touch. */
