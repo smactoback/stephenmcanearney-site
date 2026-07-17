@@ -112,6 +112,14 @@ const FIELD_SECONDARY = '#1265b3';
     color: var(--paper);
     padding: 0 4px;
   }
+  /* The UA sheet gives `figure` a `1em 40px` margin, which drops the field below
+     the intro and squeezes the figure to 300px inside its 380px column, spilling
+     the field into the gutter. Reset it, then drop back down to the intro's cap
+     line: the field inks from its top edge, but the first line's caps sit ~9px
+     into the line box, so matching the boxes would leave the art riding high. */
+  .fig {
+    margin: 9px 0 0;
+  }
   .fig .field {
     width: 380px;
     height: 142px;
