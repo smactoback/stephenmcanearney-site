@@ -7,22 +7,31 @@ const posts = (await getCollection('previous')).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
 );
 
+/** Lifted out of the chronology to the top of the list. */
+const FEATURED_SLUG = 'can-you-build-a-quant-vc-fund';
+const featured = posts.find((p) => p.id === FEATURED_SLUG);
+// Drop it from the years below rather than list it twice.
+const rest = featured ? posts.filter((p) => p.id !== featured.id) : posts;
+
 // The archive spans nearly a decade, so the year is the useful grouping.
-const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))].sort(
+const years = [...new Set(rest.map((p) => p.data.pubDate.getUTCFullYear()))].sort(
   (a, b) => b - a,
 );
+// The range still describes the whole archive, featured post included.
+const span = posts.map((p) => p.data.pubDate.getUTCFullYear());
+const [first, last] = [Math.min(...span), Math.max(...span)];
 ---
 
 <BaseLayout
   title="Previous Writing"
-  description="Archive of Stephen McAnearney's earlier writing, 2017–2026."
+  description={`Archive of Stephen McAnearney's earlier writing, ${first}–${last}.`}
 >
   <main>
     <section class="intro">
       <h1>Previous Writing</h1>
       <p>
-        Earlier essays and notes, written between {years.at(-1)} and {years.at(0)} and carried
-        over from the previous site.
+        Earlier essays and notes, written between {first} and {last} and carried over from the
+        previous site.
       </p>
     </section>
 
@@ -32,11 +41,26 @@ const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))].so
         <span>Title</span>
       </div>
       {
+        featured && (
+          <div class="year feature">
+            <h2 class="year-label accent">Featured</h2>
+            <div class="rows">
+              <article class="row">
+                <div class="when">{dotDate(featured.data.pubDate)}</div>
+                <a href={`/previous-writing/${featured.id}`} class="title-link">
+                  <h3>{featured.data.title}</h3>
+                </a>
+              </article>
+            </div>
+          </div>
+        )
+      }
+      {
         years.map((year) => (
           <div class="year">
             <h2 class="year-label">{year}</h2>
             <div class="rows">
-              {posts
+              {rest
                 .filter((p) => p.data.pubDate.getUTCFullYear() === year)
                 .map((p) => (
                   <article class="row">
@@ -57,6 +81,10 @@ const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))].so
 
 <style>
   main {
+    /* body is a column flex container, so the horizontal auto margins below
+       defeat the default stretch and collapse main to shrink-to-fit — which
+       centres it, indenting the content away from the header's left edge. */
+    width: 100%;
     max-width: var(--page-width);
     margin: 0 auto;
     padding: 24px var(--gutter) 56px;
@@ -68,9 +96,9 @@ const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))].so
 
   .intro { max-width: 720px; }
   .intro h1 {
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
   .intro p {
     margin-top: 10px;
@@ -99,6 +127,16 @@ const years = [...new Set(posts.map((p) => p.data.pubDate.getUTCFullYear()))].so
     opacity: 0.55;
     padding-bottom: 8px;
   }
+  /* Reads as a label in the same column as the years, but claimed by the accent
+     so it does not scan as just another date heading. */
+  .year-label.accent {
+    color: var(--accent);
+    opacity: 1;
+    text-transform: uppercase;
+  }
+  .feature { margin-bottom: 34px; }
+  .feature .row { border-top-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+  .feature .title-link h3 { font-size: 20px; font-weight: 600; }
   .row {
     display: grid;
     grid-template-columns: 110px 1fr;

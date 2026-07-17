@@ -65,6 +65,10 @@ const { title, pubDate, html } = post.data;
 
 <style>
   main {
+    /* body is a column flex container, so the horizontal auto margins below
+       defeat the default stretch and collapse main to shrink-to-fit — which
+       centres it, indenting the content away from the header's left edge. */
+    width: 100%;
     max-width: var(--page-width);
     margin: 0 auto;
     padding: 24px var(--gutter) 56px;

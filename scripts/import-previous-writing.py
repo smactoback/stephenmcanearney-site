@@ -8,6 +8,9 @@ from email.utils import parsedate_to_datetime
 SRC = '/Users/stephen_openclaw/Downloads/Squarespace-Wordpress-Export-07-17-2026.xml'
 OUT = '/Users/stephen_openclaw/Documents/Code/stephenmcanearney-site/src/content/previous/posts.json'
 
+# Published on the old site but deliberately held back from this archive.
+EXCLUDE_SLUGS = {'the-wealth-of-intent'}
+
 NS = {
     'wp': 'http://wordpress.org/export/1.2/',
     'content': 'http://purl.org/rss/1.0/modules/content/',
@@ -94,6 +97,10 @@ for it in items:
         dt = parsedate_to_datetime(raw)
     if not g(it, 'wp:post_date'):
         stats['date fell back to pubDate'] += 1
+
+    if slug in EXCLUDE_SLUGS:
+        skipped.append((title, 'excluded by request'))
+        continue
 
     if slug in seen:
         stats['slug collision'] += 1
