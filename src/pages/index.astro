@@ -1,11 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SquareField from '../components/art/SquareField.tsx';
-import { getPublishedPosts } from '../lib/posts';
+import { getCollection } from 'astro:content';
 import { dotDate } from '../lib/format';
 import { SITE } from '../consts';
 
-const posts = await getPublishedPosts();
+const posts = (await getCollection('previous')).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+
+/** Lifted out of the chronology to the top of the list. */
+const FEATURED_SLUG = 'can-you-build-a-quant-vc-fund';
+const featured = posts.find((p) => p.id === FEATURED_SLUG);
+// Drop it from the years below rather than list it twice.
+const rest = featured ? posts.filter((p) => p.id !== featured.id) : posts;
+
+// The archive spans nearly a decade, so the year is the useful grouping.
+const years = [...new Set(rest.map((p) => p.data.pubDate.getUTCFullYear()))].sort(
+  (a, b) => b - a,
+);
 
 // Sampled from the Yallingup Coffee Roasting Company stripe block.
 const FIELD_PRIMARY = '#2ebda1';
@@ -38,32 +51,46 @@ const FIELD_SECONDARY = '#1265b3';
       </figure>
     </section>
 
-    <section class="essays">
+    <section class="archive">
       <div class="head">
         <span>Date</span>
-        <span>Exploration</span>
-        <span class="right">time</span>
+        <span>Writing</span>
       </div>
       {
-        posts.map((p) => (
-          <article class="row">
-            <div class="when">
-              <div>{dotDate(p.data.pubDate)}</div>
+        featured && (
+          <div class="year feature">
+            <h2 class="year-label accent">Featured</h2>
+            <div class="rows">
+              <article class="row">
+                <div class="when">{dotDate(featured.data.pubDate)}</div>
+                <a href={`/previous-writing/${featured.id}`} class="title-link">
+                  <h3>{featured.data.title}</h3>
+                </a>
+              </article>
             </div>
-            <div class="body">
-              <a href={`/writing/${p.id}`} class="title-link">
-                <h3>{p.data.title}</h3>
-              </a>
-              <p class="dek">{p.data.dek}</p>
+          </div>
+        )
+      }
+      {
+        years.map((year) => (
+          <div class="year">
+            <h2 class="year-label">{year}</h2>
+            <div class="rows">
+              {rest
+                .filter((p) => p.data.pubDate.getUTCFullYear() === year)
+                .map((p) => (
+                  <article class="row">
+                    <div class="when">{dotDate(p.data.pubDate)}</div>
+                    <a href={`/previous-writing/${p.id}`} class="title-link">
+                      <h3>{p.data.title}</h3>
+                    </a>
+                  </article>
+                ))}
             </div>
-            <div class="meta-right">
-              <div>{p.data.read}</div>
-              <div class="words">{p.data.words.toLocaleString()} wds</div>
-            </div>
-          </article>
+          </div>
         ))
       }
-      {posts.length === 0 && <p class="empty">No essays yet.</p>}
+      {posts.length === 0 && <p class="empty">Nothing archived yet.</p>}
     </section>
   </main>
 </BaseLayout>
@@ -133,10 +160,10 @@ const FIELD_SECONDARY = '#1265b3';
     text-transform: uppercase;
   }
 
-  .essays { margin-top: 28px; }
+  .archive { margin-top: 40px; }
   .head {
     display: grid;
-    grid-template-columns: 110px 1fr 130px;
+    grid-template-columns: 110px 1fr;
     gap: 16px;
     margin-bottom: 10px;
     font-size: 11px;
@@ -144,12 +171,29 @@ const FIELD_SECONDARY = '#1265b3';
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-  .head .right { text-align: right; }
+  .year { margin-top: 28px; }
+  .year:first-of-type { margin-top: 0; }
+  .year-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    opacity: 0.55;
+    padding-bottom: 8px;
+  }
+  /* Reads as a label in the same column as the years, but claimed by the accent
+     so it does not scan as just another date heading. */
+  .year-label.accent {
+    color: var(--accent);
+    opacity: 1;
+    text-transform: uppercase;
+  }
+  .feature { margin-bottom: 34px; }
+  .feature .row { border-top-color: color-mix(in srgb, var(--accent) 35%, transparent); }
   .row {
     display: grid;
-    grid-template-columns: 110px 1fr 130px;
+    grid-template-columns: 110px 1fr;
     gap: 16px;
-    padding: 16px 0;
+    padding: 13px 0;
     border-top: 1px dashed var(--rule);
     align-items: baseline;
   }
@@ -157,14 +201,15 @@ const FIELD_SECONDARY = '#1265b3';
     font-size: 12px;
     opacity: 0.7;
     line-height: 1.4;
+    font-variant-numeric: tabular-nums;
   }
   .title-link { color: var(--ink); }
   .title-link:hover { text-decoration: none; }
   .title-link h3 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 1.25;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.3;
     letter-spacing: -0.01em;
   }
   .title-link:hover h3 {
@@ -172,34 +217,15 @@ const FIELD_SECONDARY = '#1265b3';
     text-decoration-color: var(--accent);
     text-underline-offset: 4px;
   }
-  .dek {
-    margin: 8px 0 0;
-    font-family: var(--font-serif);
-    font-size: 16px;
-    line-height: 1.55;
-    opacity: 0.85;
-    max-width: 640px;
-  }
-  .meta-right {
-    text-align: right;
-    font-size: 12px;
-    line-height: 1.7;
-    opacity: 0.7;
-  }
-  .words { opacity: 0.6; }
   .empty { margin-top: 24px; opacity: 0.7; }
 
   @media (max-width: 820px) {
     .hero { grid-template-columns: 1fr; }
     .fig .field { width: 100%; max-width: 380px; }
-    .head, .row { grid-template-columns: 90px 1fr 100px; }
+    .head, .row { grid-template-columns: 90px 1fr; }
   }
   @media (max-width: 560px) {
     .head { display: none; }
-    .row {
-      grid-template-columns: 1fr;
-      gap: 6px;
-    }
-    .meta-right { text-align: left; }
+    .row { grid-template-columns: 1fr; gap: 4px; }
   }
 </style>
