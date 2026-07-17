@@ -1,112 +1,77 @@
 ---
-import { NAV, SITE } from '../consts';
-import ThemeToggle from './ThemeToggle.astro';
+import { NAV } from '../consts';
+import AsciiRule from './AsciiRule.astro';
 
-const path = Astro.url.pathname;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) =>
   href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
 ---
 
-<header transition:persist>
-  <div class="inner">
-    <a href="/" class="brand" aria-label={`${SITE.author} — home`}>
-      <span class="mark" aria-hidden="true"></span>
-      <span class="brand-name">{SITE.author}</span>
+<header>
+  <div class="row">
+    <a href="/" class="brand" aria-label="Building 58 — home">
+      <h1>Building&nbsp;58<span class="cursor">_</span></h1>
     </a>
-    <div class="right">
-      <nav aria-label="Primary">
-        {
-          NAV.map((item) => (
-            <a
-              href={item.href}
-              data-nav
-              aria-current={isActive(item.href) ? 'page' : undefined}
-            >
-              {item.label}
-            </a>
-          ))
-        }
-      </nav>
-      <ThemeToggle />
-    </div>
+    <nav aria-label="Primary">
+      {
+        NAV.map((item) => (
+          <a
+            href={item.href}
+            class:list={[{ active: isActive(item.href) }]}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
   </div>
+  <div class="rule"><AsciiRule /></div>
 </header>
 
 <style>
   header {
-    border-bottom: 1px solid var(--border);
-  }
-  .inner {
-    max-width: 680px;
+    max-width: var(--page-width);
     margin: 0 auto;
-    padding: 16px var(--gutter);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    padding: 28px var(--gutter) 0;
   }
-  .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 0.94rem;
-    font-weight: 500;
-    color: var(--fg-strong);
-    letter-spacing: -0.01em;
-  }
-  .brand:hover {
-    text-decoration: none;
-  }
-  .mark {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-    background: var(--fg-strong);
-  }
-  .right {
-    display: flex;
-    align-items: center;
+  .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
     gap: 18px;
+    align-items: baseline;
   }
+  .brand { color: inherit; }
+  .brand:hover { text-decoration: none; }
+  .brand h1 {
+    margin: 6px 0 0;
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .cursor { color: var(--accent); }
   nav {
+    font-family: var(--font-mono);
+    font-size: 13px;
     display: flex;
     gap: 18px;
+    flex-wrap: wrap;
   }
   nav a {
-    font-size: 0.92rem;
-    color: var(--fg-muted);
-    transition: color 0.15s ease;
+    color: var(--ink);
+    opacity: 0.78;
   }
-  nav a:hover {
-    color: var(--fg);
-    text-decoration: none;
+  nav a.active {
+    color: var(--accent);
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
-  nav a[aria-current='page'] {
-    color: var(--fg-strong);
-  }
-  @media (max-width: 460px) {
-    .brand-name {
-      display: none;
-    }
-    .right {
-      gap: 14px;
-    }
-    nav {
-      gap: 14px;
-    }
+  .rule { margin-top: 18px; }
+  @media (max-width: 560px) {
+    .row { grid-template-columns: 1fr; gap: 8px; }
+    .brand h1 { font-size: 24px; }
   }
 </style>
-
-<script>
-  function markActiveNav() {
-    const path = location.pathname.replace(/\/$/, '') || '/';
-    document.querySelectorAll<HTMLAnchorElement>('[data-nav]').forEach((a) => {
-      const href = a.getAttribute('href') ?? '';
-      const active = href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
-      if (active) a.setAttribute('aria-current', 'page');
-      else a.removeAttribute('aria-current');
-    });
-  }
-  markActiveNav();
-  document.addEventListener('astro:page-load', markActiveNav);
-</script>

@@ -2,16 +2,16 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-// Long-form "Ground Truth" posts. Markdown and MDX both supported.
 const writing = defineCollection({
   loader: glob({ base: './src/content/writing', pattern: '**/*.{md,mdx}' }),
   schema: z.object({
+    issue: z.string(),
     title: z.string(),
-    description: z.string(),
+    dek: z.string(),
     pubDate: z.coerce.date(),
-    updatedDate: z.coerce.date().optional(),
-    tags: z.array(z.string()).default([]),
-    // Drafts are excluded from production builds.
+    words: z.number().int().nonnegative(),
+    read: z.string(),
+    description: z.string(),
     draft: z.boolean().default(false),
   }),
 });

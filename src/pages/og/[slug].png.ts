@@ -14,7 +14,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     },
     ...posts.map((post) => ({
       params: { slug: post.id },
-      props: { title: post.data.title, kicker: 'Ground Truth' },
+      props: { title: post.data.title, kicker: 'Building 58' },
     })),
   ];
 };

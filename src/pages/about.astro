@@ -1,163 +1,164 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-// Selected work. The Nature link is a placeholder — drop in the real DOI.
-const work = [
-  {
-    title: 'Meta Neural Band',
-    detail: 'Wristband that reads motor intent from surface EMG. Shipped as a Meta product.',
-    href: undefined as string | undefined,
-  },
-  {
-    title: 'Meta Ray-Ban Display',
-    detail: 'Display smart glasses. Shipped as a Meta consumer product.',
-    href: undefined as string | undefined,
-  },
-  {
-    title: 'Research in Nature',
-    detail: 'Co-authored work on neuromotor interfaces.',
-    href: 'https://www.nature.com', // TODO: replace with the paper DOI
-  },
-  {
-    title: 'Hone Capital',
-    detail: 'Early-stage venture investing.',
-    href: undefined as string | undefined,
-  },
-  {
-    title: 'J.P. Morgan',
-    detail: 'Technology, media & telecom investment banking.',
-    href: undefined as string | undefined,
-  },
-  {
-    title: 'Harvard Surgical Planning Lab',
-    detail: 'Medical imaging and surgical planning research.',
-    href: undefined as string | undefined,
-  },
-];
-
-const education = [
-  {
-    school: 'Columbia University',
-    detail: 'M.S., Management Science & Engineering. Fulbright Scholar.',
-  },
-  {
-    school: 'The University of Western Australia',
-    detail: 'Electrical & Electronic Engineering; Anatomy & Human Biology.',
-  },
-];
+import { SOCIAL } from '../consts';
 ---
 
 <BaseLayout
   title="About"
-  description="Stephen McAnearney — from engineering and anatomy in Perth to neural interfaces at Meta, and back."
+  description="Stephen McAnearney — technology strategist between Sydney, SF, and the Pilbara."
 >
   <main>
-    <header class="page-head">
-      <p class="eyebrow">About</p>
-      <h1>Stephen McAnearney</h1>
-    </header>
+    <section class="hero">
+      <div>
+        <div class="avatar-swap">
+          <img src="/assets/avatar.png" alt="Stephen McAnearney" class="avatar-base" width="240" height="240" />
+          <img src="/assets/portrait.png" alt="" aria-hidden="true" class="avatar-hover" width="240" height="240" />
+        </div>
+        <p class="caption">
+          --<br />   
+        </p>
+      </div>
 
-    <div class="prose narrative">
-      <p>
-        I grew up in Perth, Western Australia, and studied electrical and electronic engineering
-        alongside anatomy and human biology at the University of Western Australia — an unusual
-        pairing that set the pattern for most of my work since: technology pointed at the human
-        body.
-      </p>
-      <p>
-        A Fulbright Scholarship took me to Columbia, where I completed a master's in Management
-        Science and Engineering. Before that I spent time at the Harvard Surgical Planning Lab,
-        working on medical imaging and the software that helps surgeons rehearse an operation
-        before the first incision.
-      </p>
-      <p>
-        I started my career in finance — technology, media and telecom investment banking at
-        J.P. Morgan — then moved to the other side of the table as an investor at Hone Capital,
-        backing early-stage companies.
-      </p>
-      <p>
-        Most recently I was a Senior Product Manager at Meta, working on neural interfaces. I
-        helped ship the Meta Neural Band, a wristband that reads motor intent from the surface of
-        the skin, and the Meta Ray-Ban Display glasses. Some of that work was published in Nature.
-      </p>
-      <p>
-        I'm now relocating to Perth. Australia has world-class research and real industrial
-        advantages in the things deep tech increasingly depends on — energy, minerals, space, and
-        marine systems. I want to help build that ecosystem, as an investor or as a founder.
-      </p>
-    </div>
+      <div class="bio">
+        <h1>Stephen McAnearney</h1>
+          <h3>Western Australia ↔ NYC ↔ SF</h3>
 
-    <section class="block">
-      <h2 class="eyebrow">Selected work</h2>
-      <ul class="entry-list">
-        {
-          work.map((item) => (
-            <li>
-              <span class="entry-title">
-                {item.href ? <a href={item.href}>{item.title}</a> : item.title}
-              </span>
-              <span class="entry-detail">{item.detail}</span>
-            </li>
-          ))
-        }
-      </ul>
+          <p>
+            Perth-born. I spent fifteen years in New York and San Francisco: first in banking
+            and investing, including bringing <a href="https://www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/a-machine-learning-approach-to-venture-capital">machine learning</a> to seed VC in 2017, then seven years at
+            Meta (via the CTRL-labs <a href="https://www.ft.com/content/f64bde30-de6c-11e9-9743-db5a370481bc?syn-25a6b1a6=1">acquisition</a>), where I shipped the world's first mainstream neural interface and
+            contributed to work published in <a href="https://www.nature.com/articles/s41586-025-09255-w">Nature</a>. Fulbright Scholar, Columbia MSc. in
+            Management Science, UWA engineering (Sir Russell Dumas Medal).
+          </p>
+          <p>
+            Now based in Perth splitting time between Australia / NYC / SF, focused on the deep
+            tech being built on Australia's physical assets, critical minerals, energy, and
+            autonomous systems.
+          </p>
+      </div>
     </section>
 
-    <section class="block">
-      <h2 class="eyebrow">Education</h2>
-      <ul class="entry-list">
-        {
-          education.map((item) => (
-            <li>
-              <span class="entry-title">{item.school}</span>
-              <span class="entry-detail">{item.detail}</span>
-            </li>
-          ))
-        }
+    <section class="contact">
+      <h2>Contact</h2>
+      <ul>
+        <li><a id="email-link" aria-label="Email">email —</a></li>
+        <li><a href={SOCIAL.linkedin} rel="me">linkedin.com/in/stephenmcanearney</a></li>
       </ul>
+      <script>
+        // Assemble the address in-browser so it never appears in the raw HTML for scrapers.
+        const parts = ['s.mcanearney', 'gmail', 'com'];
+        const addr = parts[0] + '@' + parts[1] + '.' + parts[2];
+        const link = document.getElementById('email-link');
+        if (link) {
+          link.setAttribute('href', 'mailto:' + addr);
+          link.textContent = addr;
+        }
+      </script>
+      <p class="colophon">Set in <span class="ac">IBM Plex Mono</span> and Newsreader.</p>
     </section>
   </main>
 </BaseLayout>
 
 <style>
   main {
+    width: 100%;
     max-width: var(--page-width);
     margin: 0 auto;
-    padding: 72px var(--gutter) 88px;
+    padding: 24px var(--gutter) 56px;
+    font-family: var(--font-mono);
   }
-  .page-head {
-    margin-bottom: 36px;
+  .hero {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 40px;
+    align-items: start;
   }
-  .page-head h1 {
-    margin-top: 12px;
-    font-size: clamp(1.9rem, 1.6rem + 1.5vw, 2.3rem);
+  .avatar-swap {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    border: 1px solid var(--ink);
+    overflow: hidden;
   }
-  .narrative {
-    color: var(--fg);
+  .avatar-swap img {
+    width: 240px;
+    height: 240px;
+    image-rendering: pixelated;
+    display: block;
   }
-  .block {
-    margin-top: 56px;
+  .avatar-hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 180ms ease;
+    pointer-events: none;
   }
-  .entry-list {
+  .avatar-swap:hover .avatar-hover { opacity: 1; }
+  .caption {
+    margin-top: 10px;
+    font-size: 10.5px;
+    opacity: 0.55;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .bio { display: flex; flex-direction: column; gap: 20px; }
+  .bio h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .bio h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.3;
+  }
+  .bio p {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 640px;
+  }
+  .frame {
+    background: var(--paper);
+    padding: 8px;
+    border: 1px solid var(--rule);
+  }
+
+  .contact { margin-top: 56px; }
+  .contact h2 {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin: 0 0 14px;
+  }
+  .contact ul {
     list-style: none;
-    margin: 8px 0 0;
+    margin: 0;
     padding: 0;
-    border-top: 1px solid var(--border);
+    font-size: 13.5px;
+    line-height: 1.9;
   }
-  .entry-list li {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--border);
+  .contact a {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
   }
-  .entry-title {
-    font-size: 1.02rem;
-    font-weight: 500;
-    color: var(--fg-strong);
+  .colophon {
+    margin: 18px 0 0;
+    font-size: 12px;
+    opacity: 0.7;
+    line-height: 1.55;
   }
-  .entry-detail {
-    font-size: 0.94rem;
-    color: var(--fg-muted);
+  .ac { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
   }
 </style>

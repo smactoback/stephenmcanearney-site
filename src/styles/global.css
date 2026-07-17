@@ -1,45 +1,41 @@
-@import '@fontsource-variable/geist';
-@import '@fontsource-variable/geist-mono';
-
-/* ── Design tokens ───────────────────────────────────────────────── */
-:root,
-[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #0a0a0a;
-  --bg-subtle: #141415;
-  --bg-inline: #1d1d20;
-  --fg: #e4e4e7;
-  --fg-strong: #fafafa;
-  --fg-muted: #a1a1aa;
-  --fg-faint: #83838c;
-  --border: #262629;
-  --border-strong: #3f3f46;
-  --selection: rgba(228, 228, 231, 0.16);
-}
-
-[data-theme='light'] {
-  color-scheme: light;
-  --bg: #fcfcfc;
-  --bg-subtle: #f4f4f5;
-  --bg-inline: #ededee;
-  --fg: #27272a;
-  --fg-strong: #09090b;
-  --fg-muted: #52525b;
-  --fg-faint: #6b6b73;
-  --border: #e7e7ea;
-  --border-strong: #d4d4d8;
-  --selection: rgba(9, 9, 11, 0.1);
-}
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource/ibm-plex-mono/600.css';
+@import '@fontsource/ibm-plex-mono/700.css';
+@import '@fontsource/ibm-plex-mono/400-italic.css';
+@import '@fontsource-variable/newsreader';
+@import '@fontsource-variable/newsreader/wght-italic.css';
 
 :root {
-  --font-sans: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
-  --page-width: 640px;
-  --prose-width: 680px;
-  --gutter: 24px;
+  color-scheme: light;
+
+  --paper: #ffffff;
+  --ink: #0a0f14;
+  --soft: rgba(10, 15, 20, 0.67);
+  --rule: rgba(10, 15, 20, 0.13);
+  --accent: #1062c8;
+  --second: #e78f3d;
+  --high: #1062c8;
+
+  --base: 14px;
+  --lh: 1.55;
+  --pad: 18px;
+
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-serif: 'Newsreader Variable', 'Source Serif 4', Georgia, serif;
+  --font-sans: var(--font-mono);
+
+  --page-width: 1180px;
+  --prose-width: 640px;
+  --gutter: 56px;
 }
 
-/* ── Reset & base ────────────────────────────────────────────────── */
+@media (max-width: 720px) {
+  :root {
+    --gutter: 24px;
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -55,30 +51,24 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 1.7;
-  font-feature-settings: 'cv01', 'cv03', 'cv04', 'ss03';
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--base);
+  line-height: var(--lh);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-wrap: break-word;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
 }
 
 ::selection {
-  background: var(--selection);
+  background: var(--accent);
+  color: var(--paper);
 }
 
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
   margin: 0;
-  color: var(--fg-strong);
+  color: var(--ink);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.021em;
@@ -91,145 +81,20 @@ p {
 a {
   color: inherit;
   text-decoration: none;
-  text-underline-offset: 0.18em;
-  text-decoration-thickness: 1px;
 }
 
 a:hover {
   text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+button {
+  font: inherit;
 }
 
 img {
   max-width: 100%;
   height: auto;
-}
-
-:focus-visible {
-  outline: 2px solid var(--fg-strong);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-
-/* ── Shared elements ─────────────────────────────────────────────── */
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--fg-faint);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* ── Long-form post content ──────────────────────────────────────── */
-.prose {
-  color: var(--fg);
-}
-
-.prose > * + * {
-  margin-top: 1.45em;
-}
-
-.prose h2 {
-  margin-top: 2.4em;
-  margin-bottom: -0.4em;
-  font-size: 1.5rem;
-}
-
-.prose h3 {
-  margin-top: 2em;
-  margin-bottom: -0.5em;
-  font-size: 1.2rem;
-}
-
-.prose ul,
-.prose ol {
-  padding-left: 1.3em;
-}
-
-.prose li + li {
-  margin-top: 0.4em;
-}
-
-.prose blockquote {
-  margin: 0;
-  padding-left: 1.25em;
-  border-left: 2px solid var(--border-strong);
-  color: var(--fg-muted);
-}
-
-.prose hr {
-  border: 0;
-  border-top: 1px solid var(--border);
-  margin: 2.6em 0;
-}
-
-.prose :not(pre) > code {
-  font-family: var(--font-mono);
-  font-size: 0.86em;
-  background: var(--bg-inline);
-  padding: 0.15em 0.4em;
-  border-radius: 4px;
-}
-
-.prose pre {
-  padding: 1.15em 1.3em;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow-x: auto;
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
-
-.prose pre > code {
-  font-family: var(--font-mono);
-  background: none;
-  padding: 0;
-}
-
-.prose img {
-  border-radius: 10px;
-  border: 1px solid var(--border);
-}
-
-.prose a {
-  text-decoration: underline;
-  text-decoration-color: var(--border-strong);
-}
-
-.prose a:hover {
-  text-decoration-color: currentColor;
-}
-
-/* Activate Shiki's dark theme variables when the page is dark. */
-[data-theme='dark'] .astro-code,
-[data-theme='dark'] .astro-code span {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
-}
-
-/* ── Motion ──────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  body {
-    transition: none;
-  }
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none !important;
-  }
+  display: block;
 }

@@ -1,0 +1,23 @@
+---
+interface Props {
+  ch?: string;
+  opacity?: number;
+  color?: string;
+}
+const { ch = '─', opacity = 0.32, color = 'var(--ink)' } = Astro.props;
+const repeated = ch.repeat(240);
+---
+
+<div class="ascii-rule" style={`color:${color};opacity:${opacity};`} aria-hidden="true">{repeated}</div>
+
+<style>
+  .ascii-rule {
+    line-height: 1;
+    height: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    user-select: none;
+    letter-spacing: -1px;
+    font-family: var(--font-mono);
+  }
+</style>

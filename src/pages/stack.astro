@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MohrPartialCube from '../components/MohrPartialCubeSvg.astro';
+
+const STACK_LAYERS = [
+  { n: '01', name: 'Raw extraction' },
+  { n: '02', name: 'Processing' },
+  { n: '03', name: 'Refining & recycling' },
+  { n: '04', name: 'Wafer / fab' },
+  { n: '05', name: 'Advanced packaging' },
+  { n: '06', name: 'Chips / hardware' },
+  { n: '07', name: 'Networking' },
+  { n: '8a', name: 'Data centers' },
+  { n: '8b', name: 'Power / energy' },
+  { n: '09', name: 'Data infrastructure' },
+  { n: '10', name: 'Data assets' },
+  { n: '11', name: 'Frameworks' },
+  { n: '12', name: 'Foundation models' },
+  { n: '13', name: 'Inference infrastructure' },
+  { n: '14', name: 'Agentic infrastructure' },
+  { n: '15', name: 'Horizontal applications' },
+  { n: '16', name: 'Vertical applications' },
+  { n: '17', name: 'Physical AI' },
+] as const;
+
+const LAYER_NOTES: Record<string, string> = {
+  '01': 'Mining, drilling and dredging the substrates the rest of the stack depends on — rare earths, lithium, copper, gallium, germanium, nickel, uranium.',
+  '02': 'Ore → refined intermediate product (lithium hydroxide, separated REOs, alumina, DRI). The 10–20× value-multiplier layer.',
+  '03': '99.999%+ electronics-grade refining and closed-loop recycling re-entering those streams.',
+  '04': 'Producing semiconductor wafers at leading-edge nodes (3nm, 2nm, 1.4nm in development).',
+  '05': 'Post-fab assembly of multiple chips + HBM onto a single substrate — CoWoS, FOCoS, hybrid bonding. The binding chokepoint of 2026.',
+  '06': 'Training and inference accelerators, edge AI silicon, photonic / neuromorphic / compute-in-memory architectures.',
+  '07': 'Intra-DC fabric (InfiniBand, Ethernet, optical), inter-DC dark fibre, subsea cable.',
+  '8a': 'The buildings — concrete, racks, cooling, distribution. Roughly half of 2026 hyperscaler capex.',
+  '8b': 'Generating and delivering electricity to AI infrastructure — the binding physical constraint on build-out.',
+  '09': 'Lakes, lakehouses, vector stores, feature stores, MLOps platforms.',
+  '10': 'Proprietary training datasets — domain corpora, sensor flows, synthetic data.',
+  '11': 'Training / inference libraries — PyTorch, JAX, vLLM, TensorRT, Ray.',
+  '12': 'Large pre-trained models — closed frontier and open-weight.',
+  '13': 'Serving stack — routers, KV-cache, quantization, multi-tenant ops.',
+  '14': 'Orchestration of autonomous agents — tool use, multi-step planning, agent-to-agent handoff.',
+  '15': 'General-purpose AI products — chat, code, search, creative, productivity.',
+  '16': 'Industry-specific AI built on proprietary data + regulated workflows.',
+  '17': 'AI embedded in physical systems — humanoids, industrial autonomy, autonomous vehicles, defence autonomy.',
+};
+
+---
+
+<BaseLayout
+  title="The AI Stack"
+  description="A standing 17-layer taxonomy of the AI industrial system — substrate, production, application."
+>
+  <main>
+    <section class="intro">
+      <h1>The AI stack <span class="hyp">working hypothesis</span></h1>
+      <p>
+        "All models are wrong but some are useful" from George Box. Having a working
+        hypothesis of the structure of the AI stack supports thinking of it as a complex
+        adaptive system; where different layers (companies) interact with each other and
+        continuously adapt, creating emergent behavior. We can also explore the chokepoints
+        within this stack layering on ideas from Carlota Perez's
+        <em>Technological Revolutions and Financial Capital</em>.
+      </p>
+    </section>
+
+    <section class="rows">
+      {
+        STACK_LAYERS.map((l, idx) => {
+          const isBottom = idx === 0;
+          const isTop = idx === STACK_LAYERS.length - 1;
+          const edges = Math.round(1 + 11 * idx / (STACK_LAYERS.length - 1));
+          return (
+            <article id={`L${l.n}`} class="row">
+              <div class:list={['trace', { start: isBottom, end: isTop }]} aria-hidden="true" />
+              <div class="badge">
+                <div class="cube">
+                  <MohrPartialCube size={56} edges={edges} color="var(--accent)" strokeWidth={1} />
+                </div>
+                <div class="num">{l.n}</div>
+              </div>
+              <div>
+                <h2>{l.name}</h2>
+                <p>{LAYER_NOTES[l.n]}</p>
+              </div>
+            </article>
+          );
+        })
+      }
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    width: 100%;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 28px var(--gutter) 56px;
+    font-family: var(--font-mono);
+  }
+  .intro h1 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .intro .hyp { color: var(--second); }
+  .intro p {
+    margin-top: 16px;
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--soft);
+  }
+
+  .rows { margin-top: 28px; }
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 32px;
+    padding: 14px 0;
+    border-top: 1px solid var(--rule);
+    align-items: start;
+  }
+  .badge {
+    position: relative;
+    z-index: 1;
+    padding-top: 4px;
+  }
+  .cube {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .num {
+    position: absolute;
+    left: 14px;
+    top: 21px;
+    width: 28px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--second);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .trace {
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: -1px;
+    width: 1px;
+    background: var(--accent);
+    z-index: 0;
+  }
+  .trace.start { top: 50px; }
+  .trace.end { bottom: auto; height: 50px; }
+  .row h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .row p {
+    margin: 6px 0 0;
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.55;
+    opacity: 0.85;
+    max-width: 640px;
+  }
+</style>

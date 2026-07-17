@@ -1,58 +1,33 @@
 ---
-import { SITE, SOCIAL } from '../consts';
-
-const year = new Date().getFullYear();
-
-const links = [
-  { label: 'Email', href: `mailto:${SOCIAL.email}`, rel: undefined },
-  { label: 'LinkedIn', href: SOCIAL.linkedin, rel: 'me' },
-  { label: 'GitHub', href: SOCIAL.github, rel: 'me' },
-  { label: 'RSS', href: SOCIAL.rss, rel: undefined },
-];
+import AsciiRule from './AsciiRule.astro';
+const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
 ---
 
-<footer transition:persist>
-  <div class="inner">
-    <nav class="links" aria-label="Elsewhere">
-      {links.map((l) => <a href={l.href} rel={l.rel}>{l.label}</a>)}
-    </nav>
-    <div class="meta">
-      <span>&copy; {year} {SITE.author}</span>
-      <span class="eyebrow">Perth · Western Australia</span>
-    </div>
+<footer>
+  <AsciiRule />
+  <div class="row">
+    <span class="stamp">last build {stamp} AWST</span>
+    <span class="rights">cc by-nc 4.0 · 2025–26</span>
   </div>
 </footer>
 
 <style>
   footer {
-    margin-top: auto;
-    border-top: 1px solid var(--border);
+    max-width: var(--page-width);
+    margin: 64px auto 0;
+    padding: 0 var(--gutter) 56px;
   }
-  .inner {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 28px var(--gutter) 44px;
-  }
-  .links {
+  .row {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    opacity: 0.6;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  .links a {
-    font-size: 0.92rem;
-    color: var(--fg-muted);
-    transition: color 0.15s ease;
-  }
-  .links a:hover {
-    color: var(--fg-strong);
-  }
-  .meta {
-    margin-top: 18px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 16px;
     justify-content: space-between;
-    font-size: 0.84rem;
-    color: var(--fg-faint);
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-start;
   }
+  .stamp { letter-spacing: 0.04em; opacity: 0.92; }
+  .rights { color: var(--accent); }
 </style>

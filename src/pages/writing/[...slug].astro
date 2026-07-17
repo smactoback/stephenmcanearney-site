@@ -1,8 +1,8 @@
 ---
 import { render } from 'astro:content';
-import PostLayout from '../../layouts/PostLayout.astro';
+import EssayLayout from '../../layouts/EssayLayout.astro';
+import Sidenote from '../../components/Sidenote.astro';
 import { getPublishedPosts } from '../../lib/posts';
-import { readingTime } from '../../lib/reading-time';
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
@@ -20,16 +20,17 @@ const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<PostLayout
+<EssayLayout
   slug={post.id}
+  issue={post.data.issue}
   title={post.data.title}
+  dek={post.data.dek}
   description={post.data.description}
   pubDate={post.data.pubDate}
-  updatedDate={post.data.updatedDate}
-  tags={post.data.tags}
-  readingTime={readingTime(post.body)}
+  words={post.data.words}
+  read={post.data.read}
   newer={newer ? { id: newer.id, title: newer.data.title } : undefined}
   older={older ? { id: older.id, title: older.data.title } : undefined}
 >
-  <Content />
-</PostLayout>
+  <Content components={{ Sidenote }} />
+</EssayLayout>

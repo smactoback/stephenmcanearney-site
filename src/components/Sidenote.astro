@@ -1,0 +1,53 @@
+---
+interface Props {
+  n: number;
+}
+const { n } = Astro.props;
+---
+
+<sup class="sn-ref" data-n={n}>
+  <a href={`#sn-${n}`}>{n}</a>
+</sup>
+<aside id={`sn-${n}`} class="sidenote">
+  <span class="num">[{n}]</span>
+  <span class="body"><slot /></span>
+</aside>
+
+<style>
+  .sn-ref {
+    line-height: 0;
+  }
+  .sn-ref a {
+    text-decoration: none;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 0 1px;
+  }
+  .sidenote {
+    float: right;
+    clear: right;
+    width: 224px;
+    margin-right: -260px;
+    margin-bottom: 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--soft);
+  }
+  .sidenote .num {
+    color: var(--accent);
+    margin-right: 6px;
+  }
+  @media (max-width: 980px) {
+    .sidenote {
+      float: none;
+      width: auto;
+      margin: 10px 0 18px;
+      padding: 10px 12px;
+      border-left: 2px solid var(--accent);
+      background: rgba(16, 98, 200, 0.04);
+    }
+  }
+</style>

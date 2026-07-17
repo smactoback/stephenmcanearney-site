@@ -6,6 +6,7 @@ import { loadRenderers } from 'astro:container';
 import { render } from 'astro:content';
 import { SITE } from '../consts';
 import { getPublishedPosts } from '../lib/posts';
+import Sidenote from '../components/Sidenote.astro';
 
 export const prerender = true;
 
@@ -18,7 +19,9 @@ export async function GET(context: APIContext) {
   const items = [];
   for (const post of posts) {
     const { Content } = await render(post);
-    const content = await container.renderToString(Content);
+    const content = await container.renderToString(Content, {
+      props: { components: { Sidenote } },
+    });
     items.push({
       title: post.data.title,
       description: post.data.description,
